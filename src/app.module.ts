@@ -3,6 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DoctorModule } from './doctor/doctor.module';
+import { PatientModule } from './patient/patient.module';
+import { SharedModule } from './shared/shared.module';
+import { MailModule } from './mail/mail.module';
 import entities from './entities';
 
 @Module({
@@ -20,7 +24,11 @@ import entities from './entities';
       database: process.env.DB_NANE,
       entities: [...entities],
       synchronize: process.env.DB_SYNC == 'ON' ? true : false,
-    })
+    }),
+    DoctorModule,
+    PatientModule,
+    SharedModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService],

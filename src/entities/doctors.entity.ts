@@ -67,4 +67,25 @@ export class Doctors extends BasedEntity {
     })
     availibilty_status: string;
 
+    @Column({
+        default: false,
+        nullable: false,
+        type: 'boolean'
+    })
+    account_verified: Boolean;
+
+    @Column({
+        default: false,
+        nullable: false,
+        type: 'boolean'
+    })
+    email_verified: Boolean;
+
+    @Column({
+        default: null,
+        nullable: true,
+        type: 'longtext'
+    })
+    auth_token: string;
+
 }

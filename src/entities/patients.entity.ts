@@ -47,6 +47,20 @@ export class Patients extends BasedEntity {
     })
     otp_expiry: string;
 
+    @Column({
+        default: false,
+        nullable: false,
+        type: 'boolean'
+    })
+    email_verified: Boolean;
+
+    @Column({
+        default: null,
+        nullable: true,
+        type: 'longtext'
+    })
+    auth_token: string;
+
     @OneToMany(() => Donations, (photo) => photo.patient)
     donations: Donations[]
 
