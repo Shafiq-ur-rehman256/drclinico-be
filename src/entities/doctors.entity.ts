@@ -1,5 +1,6 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import { BasedEntity } from "./based.entity";
+import { DoctorProfile } from "./doctorProfile.entity";
 
 @Entity()
 export class Doctors extends BasedEntity {
@@ -62,10 +63,10 @@ export class Doctors extends BasedEntity {
     otp_expiry: string;
 
     @Column({
-        default: null,
+        default: 'OFFLINE',
         nullable: true
     })
-    availibilty_status: string;
+    status: string;
 
     @Column({
         default: false,
@@ -87,5 +88,9 @@ export class Doctors extends BasedEntity {
         type: 'longtext'
     })
     auth_token: string;
+
+    @OneToOne(() => DoctorProfile)
+    @JoinColumn({name: 'profile_id'})
+    profile: DoctorProfile
 
 }

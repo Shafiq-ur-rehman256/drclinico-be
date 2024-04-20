@@ -7,6 +7,40 @@ import { Patients } from "./patients.entity";
 @Entity()
 export class Appointments extends BasedEntity{
 
+    @Column({
+        default:null,
+        nullable:true
+    })
+    status: string
+
+    @Column({
+        default:null,
+        nullable:true,
+        type:"datetime"
+    })
+    waiting_time: Date
+
+    @Column({
+        default:null,
+        nullable:true,
+        type:"datetime"
+    })
+    duration_from: Date
+
+    @Column({
+        default:null,
+        nullable:true,
+        type:"datetime"
+    })
+    duration_to: Date
+
+    @Column({
+        default:null,
+        nullable:true,
+        type:"datetime"
+    })
+    scheduled_date: Date
+
     @OneToOne(() => Doctors)
     @JoinColumn({name: "doc_id"})
     docter: Doctors

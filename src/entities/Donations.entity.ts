@@ -10,22 +10,23 @@ export class Donations extends BasedEntity{
     patient: Patients
 
     @Column({
-        default: null,
-        nullable: true
+        default:null,
+        nullable:true
     })
-    transaction_amount: string;
+    transaction_token: string
 
     @Column({
-        default: null,
-        nullable: true
+        default:null,
+        nullable:true,
+        type:"decimal"
     })
-    transaction_token: string;
-
+    amount: number
 
     @Column({
-        default: null,
-        nullable: true
+        default:null,
+        nullable:true
     })
-    transaction_status: string;
-    
+    gateway_type: string
+
+
 }

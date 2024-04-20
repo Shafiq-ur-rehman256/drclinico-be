@@ -1,5 +1,5 @@
 import { Exclude, Expose, plainToClass } from "class-transformer";
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsNumber, Min } from "class-validator";
 
 
 export class signupDto{
@@ -26,6 +26,24 @@ export class signupDto{
     specialization: string;
 
     
+}
+
+export class UpdateDocProfileDto{
+
+    @IsNotEmpty()
+    @Min(1)
+    @IsNumber()
+    doctor_id: number;
+    
+    @IsNotEmpty()
+    about_me: string;
+
+    @IsNotEmpty()
+    available_start: Date;
+
+    @IsNotEmpty()
+    available_end: Date;
+
 }
 
 export class authenticateDto{

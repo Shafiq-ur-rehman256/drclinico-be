@@ -7,30 +7,18 @@ import { Patients } from "./patients.entity";
 @Entity()
 export class Notifications extends BasedEntity{
 
-    @OneToOne(() => Doctors)
-    @JoinColumn({name: "doc_id"})
-    docter: Doctors
-
-    @OneToOne(() => Patients)
-    @JoinColumn({name: "pat_id"})
-    patient: Patients;
+    @Column({
+        default:null,
+        nullable:true
+     })
+     subject: string
 
     @Column({
-        default: null,
-        nullable: true
-    })
-    heading: string;
-
-    @Column({
-        default: null,
-        nullable: true
-    })
-    description: string;
-
-    @Column({
-        default: null,
-        nullable: true
-    })
-    action: string;
+        default:null,
+        nullable:true,
+        type:"longtext"
+     })
+     text: string
+     
 
 }

@@ -19,13 +19,13 @@ export class Chats extends BasedEntity{
         default: null,
         nullable: true
     })
-    text_message: string;
+    message: string;
 
     @Column({
         default: null,
         nullable: true
     })
-    media_link: string;
+    attachment: string;
 
     @Column({
         default: null,
@@ -33,10 +33,5 @@ export class Chats extends BasedEntity{
     })
     message_type: string;
 
-    @Column({
-        default: null,
-        nullable: true
-    })
-    media_type: string;
 
 }

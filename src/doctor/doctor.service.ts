@@ -3,17 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Doctors } from 'src/entities/doctors.entity';
 import { ResponseService } from 'src/shared/services/response/response.service';
 import { IsNull, Repository } from 'typeorm';
-import { SerializeDoctor, VerifyOtpDto, authenticateDto, signupDto } from './doctor.dto';
+import { SerializeDoctor, UpdateDocProfileDto, VerifyOtpDto, authenticateDto, signupDto } from './doctor.dto';
 import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from 'src/shared/services/jwt/jwt.service';
 import * as rsg from 'randomstring';
 import { MailService } from 'src/mail/mail.service';
+import { DoctorProfile } from 'src/entities/doctorProfile.entity';
 
 @Injectable()
 export class DoctorService {
     constructor(
         @InjectRepository(Doctors) private _doctorRepo: Repository<Doctors>,
+        @InjectRepository(DoctorProfile) private _doctorProfileRepo: Repository<DoctorProfile>,
         @Inject('RES-SERVICE') private _res: ResponseService,
         @Inject('JWT-SERVICE') private _jwt: JwtService,
         @Inject('MAILER-SERVICE') private _mailer: MailService,
@@ -73,6 +75,71 @@ export class DoctorService {
         }
     }
 
+    async updateDoctorProfile(body: UpdateDocProfileDto, req: Request){
+        try {
+            
+            const { doctor_id, about_me, available_end, available_start } = body;
+
+            const doctor = await this._doctorRepo.findOne({
+                where: {
+                    id: doctor_id,
+                    account_verified: true
+                },
+                relations: {
+                    profile: true
+                }
+            })
+
+            if (!doctor.profile) {
+                
+                const profile = this._doctorProfileRepo.create({
+                    about_me: about_me,
+                    available_end: available_end,
+                    available_start: available_start
+                })
+
+                await this._doctorProfileRepo.save(profile);
+
+                await this._doctorRepo.createQueryBuilder()
+                .update()
+                .set({
+                    profile: profile
+                })
+                .where("id = :id", {id: doctor_id})
+                .execute()
+
+                const data = {
+                    about_me,
+                    available_end,
+                    available_start
+                }
+                return this._res.generateRes(HttpStatus.OK, data, "Profile updated", req);
+
+            }else{
+
+                await this._doctorProfileRepo.createQueryBuilder()
+                .update()
+                .set({
+                    about_me: about_me,
+                    available_end: available_end,
+                    available_start: available_start
+                })
+                .where("id = :id", {id: doctor.profile.id})
+                .execute()
+
+                const data = {
+                    about_me,
+                    available_end,
+                    available_start
+                }
+                return this._res.generateRes(HttpStatus.OK, data, "Profile updated", req);
+            }
+
+        } catch (error) {
+            return this._res.generateErr(error, req);
+        }
+    }
+
     async doctorAuthenticate(body: authenticateDto, req: Request) {
         try {
             console.log(body);
@@ -109,7 +176,8 @@ export class DoctorService {
             await this._doctorRepo.createQueryBuilder()
             .update()
             .set({
-                auth_token: token
+                auth_token: token,
+                status: 'ONLINE'
             })
             .where("id = :id", {id: findOne.id})
             .execute()
@@ -161,6 +229,29 @@ export class DoctorService {
             .execute()
 
             return this._res.generateRes(HttpStatus.OK, [], "OTP VERIFIED", req);
+
+        } catch (error) {
+            return this._res.generateErr(error, req);
+        }
+    }
+
+    async getAllActiveDoctorList(req: Request){
+        try {
+            
+            const activeDoctorList = await this._doctorRepo.find({
+                where: {
+                    account_verified: true,
+                    status: 'ONLINE'
+                },
+                select: {
+                    id: true,
+                    full_name: true,
+                    specialization: true,
+                    status: true
+                }
+            })
+
+            return this._res.generateRes(HttpStatus.OK, activeDoctorList, "Active Doctor List", req);
 
         } catch (error) {
             return this._res.generateErr(error, req);

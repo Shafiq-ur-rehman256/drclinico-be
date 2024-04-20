@@ -1,6 +1,6 @@
-import { Body, Controller, Inject, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Put, Request } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
-import { VerifyOtpDto, authenticateDto, signupDto } from './doctor.dto';
+import { UpdateDocProfileDto, VerifyOtpDto, authenticateDto, signupDto } from './doctor.dto';
 import { Request as request } from 'express';
 
 @Controller('doctor')
@@ -15,6 +15,11 @@ export class DoctorController {
         return this._doctor.doctorSignup(body, req);
     }
 
+    @Put('profile')
+    updateDoctorProfile(@Body() body: UpdateDocProfileDto, @Request() req: request){
+        return this._doctor.updateDoctorProfile(body, req)
+    }
+
     @Put('authenticate')
     doctorAuthenticate(@Body() body: authenticateDto, @Request() req: request){
         console.log("run");
@@ -24,6 +29,11 @@ export class DoctorController {
     @Post('verify-otp')
     verifyDoctorOtp(@Body() body: VerifyOtpDto, @Request() req: request){
         return this._doctor.verifyDoctorOtp(body, req);
+    }
+
+    @Get('active/list')
+    getAllActiveDoctorList(@Request() req: request){
+        return this._doctor.getAllActiveDoctorList(req)
     }
 
 }

@@ -17,7 +17,7 @@ import { join } from 'path';
           service: 'gmail',
           // host: process.env.NODE_MAILER_HOST,
           // port: 465,
-          // secure: true,
+          secure: false,
           auth: {
             user: process.env.NODE_MAILER_USER,
             pass: process.env.NODE_MAILER_PASS

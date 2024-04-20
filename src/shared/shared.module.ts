@@ -4,10 +4,12 @@ import { JwtService } from './services/jwt/jwt.service';
 import { ResponseService } from './services/response/response.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Logs } from 'src/entities/logs.entity';
+import { Patients } from 'src/entities/patients.entity';
+import { PatientMiddleware } from './middlewares/patient/patient.middleware';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Logs])
+    TypeOrmModule.forFeature([Logs, Patients])
   ],
   providers: [
     {
