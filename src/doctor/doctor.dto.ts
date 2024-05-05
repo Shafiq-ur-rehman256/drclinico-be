@@ -1,5 +1,5 @@
-import { Exclude, Expose, plainToClass } from "class-transformer";
-import { IsNotEmpty, IsNumber, Min } from "class-validator";
+import { Exclude, Expose, plainToClass, Type } from "class-transformer";
+import { ArrayMinSize, IsNotEmpty, IsNumber, Min, MinLength, ValidateNested } from "class-validator";
 
 
 export class signupDto{
@@ -66,6 +66,28 @@ export class VerifyOtpDto{
     otp_code: string
 
 }
+
+class Slot {
+
+    @IsNotEmpty()
+    day_name: string;
+
+    start: string;
+
+    end: string;
+
+}
+export class AvailableSlotsDto{
+
+    @IsNotEmpty()
+    @ArrayMinSize(1)
+    @ValidateNested({each: true})
+    @Type(() => Slot)
+    slots: Slot[];
+
+}
+
+
 
 export class SerializeDoctor {
 

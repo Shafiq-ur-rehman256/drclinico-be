@@ -9,6 +9,8 @@ import { PatientMiddleware } from 'src/shared/middlewares/patient/patient.middle
 import { Patients } from 'src/entities/patients.entity';
 import { Logs } from 'src/entities/logs.entity';
 import { DoctorProfile } from 'src/entities/doctorProfile.entity';
+import { DoctorMiddleware } from 'src/shared/middlewares/doctor/doctor.middleware';
+import { DoctorAvailableSlots } from 'src/entities/doctorAvailableSlots.entity';
 
 @Module({
   imports: [
@@ -16,7 +18,8 @@ import { DoctorProfile } from 'src/entities/doctorProfile.entity';
       Doctors,
       Patients,
       Logs,
-       DoctorProfile
+      DoctorProfile,
+      DoctorAvailableSlots
     ]),
     SharedModule,
     MailModule
@@ -33,10 +36,19 @@ export class DoctorModule implements NestModule {
     consumer
       .apply(PatientMiddleware)
       .forRoutes({
-        path: 'active/list',
+        path: 'doctor/active/list',
         method: RequestMethod.GET,
       });
+
+    consumer
+    .apply(DoctorMiddleware)
+    .forRoutes({
+      path: 'doctor/set/available_slots',
+      method: RequestMethod.POST
+    })
   }
+
+  
 
 
 }

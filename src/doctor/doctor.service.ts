@@ -3,19 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Doctors } from 'src/entities/doctors.entity';
 import { ResponseService } from 'src/shared/services/response/response.service';
 import { IsNull, Repository } from 'typeorm';
-import { SerializeDoctor, UpdateDocProfileDto, VerifyOtpDto, authenticateDto, signupDto } from './doctor.dto';
+import { AvailableSlotsDto, SerializeDoctor, UpdateDocProfileDto, VerifyOtpDto, authenticateDto, signupDto } from './doctor.dto';
 import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from 'src/shared/services/jwt/jwt.service';
 import * as rsg from 'randomstring';
 import { MailService } from 'src/mail/mail.service';
 import { DoctorProfile } from 'src/entities/doctorProfile.entity';
+import { DoctorAvailableSlots } from 'src/entities/doctorAvailableSlots.entity';
 
 @Injectable()
 export class DoctorService {
     constructor(
         @InjectRepository(Doctors) private _doctorRepo: Repository<Doctors>,
         @InjectRepository(DoctorProfile) private _doctorProfileRepo: Repository<DoctorProfile>,
+        @InjectRepository(DoctorAvailableSlots) private _doctorAvailableSlotseRepo: Repository<DoctorAvailableSlots>,
         @Inject('RES-SERVICE') private _res: ResponseService,
         @Inject('JWT-SERVICE') private _jwt: JwtService,
         @Inject('MAILER-SERVICE') private _mailer: MailService,
@@ -252,6 +254,96 @@ export class DoctorService {
             })
 
             return this._res.generateRes(HttpStatus.OK, activeDoctorList, "Active Doctor List", req);
+
+        } catch (error) {
+            return this._res.generateErr(error, req);
+        }
+    }
+
+    async setAvailableSlot(body: AvailableSlotsDto, req: Request){
+        try {
+            
+            const decodedToken: any = await this._jwt.decodeToken(req.headers.authorization)
+            
+            const doctor = await this._doctorRepo.findOne({
+                where: {
+                    account_verified: true,
+                    id: decodedToken.id
+                },
+                relations: {
+                    profile: true,
+                    available_slots: true
+                }
+            })
+
+            if (!doctor) {
+                throw new HttpException("Something Went Wrong", HttpStatus.BAD_REQUEST) 
+            }
+
+            const {slots} = body;
+
+            for(const slot of slots){
+                
+                const isExist = await this._doctorAvailableSlotseRepo.findOne({
+                    where: {
+                        doctor: {
+                            id: decodedToken.id
+                        },
+                        day_name: slot.day_name
+                    }
+                })
+
+                if (!isExist) {
+                    
+                    const createSlot = this._doctorAvailableSlotseRepo.create({
+                        day_name: slot.day_name,
+                        start: slot.start,
+                        end: slot.end,
+                        doctor: doctor
+                    })
+
+                    await this._doctorAvailableSlotseRepo.save(createSlot);
+
+                }else{
+
+                    console.log(slot.end);
+                    await this._doctorAvailableSlotseRepo.createQueryBuilder()
+                    .update()
+                    .set({
+                        day_name: slot.day_name,
+                        start: slot.start,
+                        end: slot.end,
+                    })
+                    .where("day_name = :name AND doctor_id = :doctor_id", {name: slot.day_name, doctor_id: doctor.id})
+                    .execute()
+
+                }
+
+            }
+
+            return this._res.generateRes(HttpStatus.OK, slots ,"Slots updated sucessfully", req );
+
+        } catch (error) {
+            return this._res.generateErr(error, req)
+        }
+    }
+
+    async getAllDoctorAvailableSlots(req: Request){
+        try {
+            
+            const decodedToken:any = await this._jwt.decodeToken(req.headers.authorization);
+
+            const doctoSlots = await this._doctorAvailableSlotseRepo.find({
+                where: {
+                    doctor: {
+                        deleted_at: IsNull(),
+                        account_verified: true,
+                        id: decodedToken.id
+                    }
+                }
+            })
+
+            return this._res.generateRes(HttpStatus.OK, doctoSlots, "Doctor slots", req);
 
         } catch (error) {
             return this._res.generateErr(error, req);

@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BasedEntity } from "./based.entity";
 import { DoctorProfile } from "./doctorProfile.entity";
+import { DoctorAvailableSlots } from "./doctorAvailableSlots.entity";
 
 @Entity()
 export class Doctors extends BasedEntity {
@@ -91,6 +92,10 @@ export class Doctors extends BasedEntity {
 
     @OneToOne(() => DoctorProfile)
     @JoinColumn({name: 'profile_id'})
-    profile: DoctorProfile
+    profile: DoctorProfile;
+
+
+    @OneToMany(() => DoctorAvailableSlots, (photo) => photo.doctor)
+    available_slots: DoctorAvailableSlots[]
 
 }

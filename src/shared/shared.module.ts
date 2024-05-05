@@ -6,10 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Logs } from 'src/entities/logs.entity';
 import { Patients } from 'src/entities/patients.entity';
 import { PatientMiddleware } from './middlewares/patient/patient.middleware';
+import { Doctors } from 'src/entities/doctors.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Logs, Patients])
+    TypeOrmModule.forFeature([Logs, Patients, Doctors])
   ],
   providers: [
     {
