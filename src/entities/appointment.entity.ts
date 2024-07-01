@@ -1,7 +1,9 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BasedEntity } from "./based.entity";
 import { Doctors } from "./doctors.entity";
 import { Patients } from "./patients.entity";
+import { Chats } from "./chats.entity";
+import { Conversations } from "./conversation.entity";
 
 
 @Entity()
@@ -41,18 +43,25 @@ export class Appointments extends BasedEntity{
     })
     scheduled_date: Date
 
-    @OneToOne(() => Doctors)
-    @JoinColumn({name: "doc_id"})
+    @ManyToOne(() => Doctors, (doctor) => doctor)
+    @JoinColumn({name: "doctor_id"})
     docter: Doctors
 
-    @OneToOne(() => Patients)
-    @JoinColumn({name: "pat_id"})
-    patient: Patients;
+    @ManyToOne(() => Patients, (patient) => patient)
+    @JoinColumn({name: "patient_id"})
+    patient: Patients
 
     @Column({
         default: null,
         nullable: true
     })
     selected_slot_time: string;
+
+    @OneToMany(() => Chats, (appointment) => appointment.appointments)
+    chats: Chats[];
+
+    @ManyToOne(() => Conversations, (patient) => patient)
+    @JoinColumn({name: "convo_id"})
+    conversation: Conversations;
 
 }

@@ -9,14 +9,12 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from 'src/shared/services/jwt/jwt.service';
 import * as rsg from 'randomstring';
 import { MailService } from 'src/mail/mail.service';
-import { DoctorProfile } from 'src/entities/doctorProfile.entity';
 import { DoctorAvailableSlots } from 'src/entities/doctorAvailableSlots.entity';
 
 @Injectable()
 export class DoctorService {
     constructor(
         @InjectRepository(Doctors) private _doctorRepo: Repository<Doctors>,
-        @InjectRepository(DoctorProfile) private _doctorProfileRepo: Repository<DoctorProfile>,
         @InjectRepository(DoctorAvailableSlots) private _doctorAvailableSlotseRepo: Repository<DoctorAvailableSlots>,
         @Inject('RES-SERVICE') private _res: ResponseService,
         @Inject('JWT-SERVICE') private _jwt: JwtService,
@@ -78,68 +76,64 @@ export class DoctorService {
     }
 
     async updateDoctorProfile(body: UpdateDocProfileDto, req: Request){
-        try {
+        // try {
             
-            const { doctor_id, about_me, available_end, available_start } = body;
+        //     const { doctor_id, about_me, available_end, available_start } = body;
 
-            const doctor = await this._doctorRepo.findOne({
-                where: {
-                    id: doctor_id,
-                    account_verified: true
-                },
-                relations: {
-                    profile: true
-                }
-            })
+        //     const doctor = await this._doctorRepo.findOne({
+        //         where: {
+        //             id: doctor_id,
+        //             account_verified: true
+        //         },
+        //         relations: {
+        //             profile: true
+        //         }
+        //     })
 
-            if (!doctor.profile) {
+        //     if (!doctor.profile) {
                 
-                const profile = this._doctorProfileRepo.create({
-                    about_me: about_me,
-                    available_end: available_end,
-                    available_start: available_start
-                })
+        //         const profile = this._doctorProfileRepo.create({
+        //             about_me: about_me
+        //         })
 
-                await this._doctorProfileRepo.save(profile);
+        //         await this._doctorProfileRepo.save(profile);
 
-                await this._doctorRepo.createQueryBuilder()
-                .update()
-                .set({
-                    profile: profile
-                })
-                .where("id = :id", {id: doctor_id})
-                .execute()
+        //         await this._doctorRepo.createQueryBuilder()
+        //         .update()
+        //         .set({
+        //             profile: profile
+        //         })
+        //         .where("id = :id", {id: doctor_id})
+        //         .execute()
 
-                const data = {
-                    about_me,
-                    available_end,
-                    available_start
-                }
-                return this._res.generateRes(HttpStatus.OK, data, "Profile updated", req);
+        //         const data = {
+        //             about_me,
+        //             available_end,
+        //             available_start
+        //         }
+        //         return this._res.generateRes(HttpStatus.OK, data, "Profile updated", req);
 
-            }else{
+        //     }else{
 
-                await this._doctorProfileRepo.createQueryBuilder()
-                .update()
-                .set({
-                    about_me: about_me,
-                    available_end: available_end,
-                    available_start: available_start
-                })
-                .where("id = :id", {id: doctor.profile.id})
-                .execute()
+        //         await this._doctorProfileRepo.createQueryBuilder()
+        //         .update()
+        //         .set({
+        //             about_me: about_me
+        //         })
+        //         .where("id = :id", {id: doctor.profile.id})
+        //         .execute()
 
-                const data = {
-                    about_me,
-                    available_end,
-                    available_start
-                }
-                return this._res.generateRes(HttpStatus.OK, data, "Profile updated", req);
-            }
+        //         const data = {
+        //             about_me,
+        //             available_end,
+        //             available_start
+        //         }
+        //         return this._res.generateRes(HttpStatus.OK, data, "Profile updated", req);
+        //     }
 
-        } catch (error) {
-            return this._res.generateErr(error, req);
-        }
+        // } catch (error) {
+        //     return this._res.generateErr(error, req);
+        // }
     }
 
     async doctorAuthenticate(body: authenticateDto, req: Request) {
@@ -271,7 +265,6 @@ export class DoctorService {
                     id: decodedToken.id
                 },
                 relations: {
-                    profile: true,
                     available_slots: true
                 }
             })

@@ -1,7 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BasedEntity } from "./based.entity";
-import { DoctorProfile } from "./doctorProfile.entity";
 import { DoctorAvailableSlots } from "./doctorAvailableSlots.entity";
+import { Appointments } from "./appointment.entity";
+import { Chats } from "./chats.entity";
+import { Conversations } from "./conversation.entity";
 
 @Entity()
 export class Doctors extends BasedEntity {
@@ -64,7 +66,7 @@ export class Doctors extends BasedEntity {
     otp_expiry: string;
 
     @Column({
-        default: 'OFFLINE',
+        default: 'offline',
         nullable: true
     })
     status: string;
@@ -90,12 +92,23 @@ export class Doctors extends BasedEntity {
     })
     auth_token: string;
 
-    @OneToOne(() => DoctorProfile)
-    @JoinColumn({name: 'profile_id'})
-    profile: DoctorProfile;
+    @Column({
+        default: null,
+        nullable: true
+    })
+    socket_id: string;
 
 
-    @OneToMany(() => DoctorAvailableSlots, (photo) => photo.doctor)
+    @OneToMany(() => DoctorAvailableSlots, (slots) => slots.doctor)
     available_slots: DoctorAvailableSlots[]
 
+    @OneToMany(() => Appointments, (appointment) => appointment.docter)
+    appointments: Appointments[]
+
+
+    @OneToMany(() => Chats, (chats) => chats.docter)
+    chats: Chats[]
+
+    @OneToMany(() => Conversations, (convo) => convo.docter)
+    conversations: Conversations[]
 }

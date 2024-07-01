@@ -15,6 +15,8 @@ import entities from './entities';
 import { LoggerModule } from 'nestjs-pino';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MorganInterceptor, MorganModule } from 'nest-morgan';
+import { SocketGateway } from './socket/socket.gateway';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -40,7 +42,8 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
     ChatsModule,
     NotificationsModule,
     DonationsModule,
-    MorganModule
+    MorganModule,
+    SocketModule
   ],
   controllers: [AppController],
   providers: [
@@ -48,6 +51,7 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
     {
       provide: APP_INTERCEPTOR,
       useClass: MorganInterceptor('combined'),
-    }],
+    },
+    SocketGateway],
 })
 export class AppModule { }

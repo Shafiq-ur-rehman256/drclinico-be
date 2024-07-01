@@ -1,6 +1,9 @@
 import { Column, Entity, OneToMany } from "typeorm";
 import { BasedEntity } from "./based.entity";
 import { Donations } from "./Donations.entity";
+import { Appointments } from "./appointment.entity";
+import { Chats } from "./chats.entity";
+import { Conversations } from "./conversation.entity";
 
 @Entity()
 export class Patients extends BasedEntity {
@@ -61,7 +64,28 @@ export class Patients extends BasedEntity {
     })
     auth_token: string;
 
+    @Column({
+        default: null,
+        nullable: true
+    })
+    socket_id: string;
+
+    @Column({
+        default: 'offline',
+        nullable: true
+    })
+    status: string;
+
     @OneToMany(() => Donations, (photo) => photo.patient)
     donations: Donations[]
+
+    @OneToMany(() => Appointments, (photo) => photo.patient)
+    appointments: Appointments[]
+
+    @OneToMany(() => Chats, (photo) => photo.patient)
+    chats: Chats[]
+
+    @OneToMany(() => Conversations, (convo) => convo.patient)
+    conversations: Conversations[]
 
 }

@@ -9,7 +9,7 @@ export class JwtService {
         return  encodedToken;
     }
 
-    async decodeToken(token: string){
+    async decodeToken(token: string):Promise<any>{
 
         const decodedToken = jwt.verify(token, process.env.APP_JWT_SECRET);
         return decodedToken;

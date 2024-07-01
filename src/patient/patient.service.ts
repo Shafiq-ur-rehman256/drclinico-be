@@ -81,7 +81,7 @@ export class PatientService {
                 }
             })
 
-
+            console.log(findOne);
             if(!findOne){
                 throw new HttpException("Invalid email provided!", HttpStatus.BAD_REQUEST);
             }

@@ -8,7 +8,6 @@ import { MailModule } from 'src/mail/mail.module';
 import { PatientMiddleware } from 'src/shared/middlewares/patient/patient.middleware';
 import { Patients } from 'src/entities/patients.entity';
 import { Logs } from 'src/entities/logs.entity';
-import { DoctorProfile } from 'src/entities/doctorProfile.entity';
 import { DoctorMiddleware } from 'src/shared/middlewares/doctor/doctor.middleware';
 import { DoctorAvailableSlots } from 'src/entities/doctorAvailableSlots.entity';
 
@@ -18,7 +17,6 @@ import { DoctorAvailableSlots } from 'src/entities/doctorAvailableSlots.entity';
       Doctors,
       Patients,
       Logs,
-      DoctorProfile,
       DoctorAvailableSlots
     ]),
     SharedModule,
