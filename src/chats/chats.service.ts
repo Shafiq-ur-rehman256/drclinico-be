@@ -241,7 +241,7 @@ export class ChatsService {
                 }
             });
 
-            this._general.changObj({topic:'send-message-patient', data: newMessage})
+            this._general.changObj({topic:'send-message-doctor', data: newMessage})
 
             return this._res.generateRes(HttpStatus.OK, newMessage, "Message Emit", req);
 

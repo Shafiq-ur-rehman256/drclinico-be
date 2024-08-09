@@ -4,6 +4,7 @@ import { DoctorAvailableSlots } from "./doctorAvailableSlots.entity";
 import { Appointments } from "./appointment.entity";
 import { Chats } from "./chats.entity";
 import { Conversations } from "./conversation.entity";
+import { Prescription } from "./prescription.entity";
 
 @Entity()
 export class Doctors extends BasedEntity {
@@ -111,4 +112,7 @@ export class Doctors extends BasedEntity {
 
     @OneToMany(() => Conversations, (convo) => convo.docter)
     conversations: Conversations[]
+
+    @OneToMany(() => Prescription, (presc) => presc.doctor)
+    prescription: Prescription[]
 }

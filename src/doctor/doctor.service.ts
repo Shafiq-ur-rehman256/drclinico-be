@@ -237,7 +237,7 @@ export class DoctorService {
             const activeDoctorList = await this._doctorRepo.find({
                 where: {
                     account_verified: true,
-                    status: 'ONLINE'
+                    status: 'Active'
                 },
                 select: {
                     id: true,

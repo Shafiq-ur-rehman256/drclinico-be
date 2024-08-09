@@ -17,6 +17,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MorganInterceptor, MorganModule } from 'nest-morgan';
 import { SocketGateway } from './socket/socket.gateway';
 import { SocketModule } from './socket/socket.module';
+import { PrescriptionModule } from './prescription/prescription.module';
 
 @Module({
   imports: [
@@ -43,7 +44,8 @@ import { SocketModule } from './socket/socket.module';
     NotificationsModule,
     DonationsModule,
     MorganModule,
-    SocketModule
+    SocketModule,
+    PrescriptionModule
   ],
   controllers: [AppController],
   providers: [

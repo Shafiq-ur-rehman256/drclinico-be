@@ -29,7 +29,9 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       case 'send-message-patient':
         this.sendMessageToPatient(data)
         break;
-
+      case 'send-message-doctor':
+        this.sendMessageToDoctor(data)
+        break;
       default:
         break;
     }
@@ -67,6 +69,7 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('joinRoom')
   handleJoinRoom(client: Socket, room: string): void {
+    this.handleLeaveRoom(client, room);
     let isJoined: boolean = false;
     client.rooms.forEach((ele) => {
       if (ele == room) {
@@ -84,24 +87,23 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(client: Socket, room: string) {
     console.log("leave room name", room);
+    client.rooms.forEach((_room)=>{
+      client.leave(_room);
+    })
+    client.leave(room);
     // console.log(this.wss.sockets.adapter.rooms);
     // console.log(this.wss.sockets.);
-    client.leave(room);
+    
   }
 
   sendMessageToPatient(data: any) {
-    console.log(data.conversation.room_name);
-    this.wss.sockets.adapter.rooms.get(data.conversation.room_name).forEach((ele) => {
-      const client = this.connectedClients.get(ele);
-      if (client) {
-        const rooms = Array.from(client.rooms).filter(room => room !== client.id); // Get rooms excluding personal room
-        rooms.forEach(room => {
-          this.wss.to(room).emit('chat-message', data);
-        });
-      }
-    });
-    // this.wss.sockets.in(data.conversation.room_name).emit('chat-message', data)
-    // this.wss.to(data.conversation.room_name).emit('chat-message', data)
+    this.wss.to(data.conversation.room_name).emit('pat-chat-message', data);
+    this.wss.to(data.conversation.room_name).emit('doc-new-message', data);
+  }
+
+  sendMessageToDoctor(data: any) {
+    this.wss.to(data.conversation.room_name).emit('doc-chat-message', data);
+    this.wss.to(data.conversation.room_name).emit('pat-new-message', data);
   }
 
 }
